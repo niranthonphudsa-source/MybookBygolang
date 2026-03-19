@@ -14,10 +14,10 @@ func NewBookController(u usecase.BookUsecase) *bookController {
 	return &bookController{usecase: u}
 }
 
-func (c *bookController) GetBooksHandler(ctx *fiber.Ctx) error {
-	books, err := c.usecase.GetBookAllRepoImpl()
+func (control *bookController) GetBooksHandler(c *fiber.Ctx) error {
+	books, err := control.usecase.GetBookAllRepoImpl()
 	if err != nil {
-		return ctx.Status(500).JSON(err.Error())
+		return c.Status(500).JSON(err.Error())
 	}
-	return ctx.JSON(books)
+	return c.JSON(books)
 }
