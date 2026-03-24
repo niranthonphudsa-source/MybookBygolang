@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	bookusecase "mylibary/book_module/book_usecase"
+	"mylibary/book_module/entities"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -39,3 +40,23 @@ func (u *bookController) GetBookIdController(c *fiber.Ctx) error {
 	}
 	return c.JSON(books)
 }
+
+func (u *bookController) CreateBookController(c *fiber.Ctx) error {
+	var bookNew = new(entities.Books)
+
+	if err := c.BodyParser(bookNew); err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).SendString("Error BodyParser CreateBook Controller")
+	}
+	fmt.Print("Controller", bookNew.Book_name, bookNew.Book_author, bookNew.Adminupdate_id)
+	err := u.usecase.CreateBookRepoImpl(bookNew)
+	if err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+			"message": "Error is: " + err.Error(),
+		})
+	}
+
+	return c.JSON(bookNew)
+}
+
+
+

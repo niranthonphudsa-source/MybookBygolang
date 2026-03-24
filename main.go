@@ -40,5 +40,6 @@ func main() {
 
 	app.Get("/book", bookcontroller.GetBookAllController)
 	app.Get("/book/:book_id", bookcontroller.GetBookIdController)
+	app.Post("/book", bookcontroller.CreateBookController)
 	app.Listen(":" + fiberPort)
 }

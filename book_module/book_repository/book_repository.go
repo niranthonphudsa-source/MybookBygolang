@@ -8,9 +8,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var books []entities.Books
+
 type BooksRepository interface {
 	GetBooksAll() ([]entities.Books, error)
 	GetBookId(book_id int) (*entities.Books, error)
+	CreateBook(bookNew *entities.Books) error
 }
 
 type getDbBooks struct {
@@ -21,8 +24,6 @@ func NewBooksRepository(db *sql.DB) *getDbBooks {
 	fmt.Print(&db)
 	return &getDbBooks{db: db}
 }
-
-var books []entities.Books
 
 func (conn *getDbBooks) GetBooksAll() ([]entities.Books, error) {
 	rows, err := conn.db.Query("SELECT book_id, book_name," +
@@ -57,4 +58,19 @@ func (conn *getDbBooks) GetBookId(book_id int) (*entities.Books, error) {
 	}
 
 	return &b, nil
+}
+
+func (conn *getDbBooks) CreateBook(bookNew *entities.Books) error {
+
+	fmt.Print("Repository ", bookNew.Book_name, bookNew.Book_author, bookNew.Adminupdate_id)
+
+	_, err := conn.db.Exec("INSERT INTO public.mybook_db(book_name, book_author, adminupdate_id) "+
+		" VALUES ($1, $2, $3)", bookNew.Book_name, bookNew.Book_author, bookNew.Adminupdate_id)
+
+	if err != nil {
+		fmt.Print("Error is", err)
+		return err
+	}
+	return err
+
 }
