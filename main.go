@@ -5,13 +5,11 @@ import (
 	"log"
 	"os"
 
+	bookcontroller "mylibary/book_module/book_controller"
+	bookrepository "mylibary/book_module/book_repository"
+	bookusecase "mylibary/book_module/book_usecase"
+
 	"mylibary/configs"
-	"mylibary/module/createbook/createcontroller"
-	"mylibary/module/createbook/createrepository"
-	"mylibary/module/createbook/createusecase"
-	"mylibary/module/getbook/controller"
-	"mylibary/module/getbook/repository"
-	"mylibary/module/getbook/usecase"
 	"mylibary/pkg/database"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,31 +27,18 @@ func main() {
 	cgf := configs.GetConnectServer()
 	db := database.ConnecDB(&cgf.PostgresSQL)
 
-	bookRepo := repository.GetBooksRepository(db)
-	bookUsecase := usecase.NewBookUsecase(bookRepo)
-	bookController := controller.NewBookController(bookUsecase)
+	bookRepo := bookrepository.NewBooksRepository(db)
+	bookusecase := bookusecase.NewBookUsecase(bookRepo)
+	bookcontroller := bookcontroller.NewBookController(bookusecase)
 
-	bookIDRepo := repository.GetBooksRepository(db)
-	bookIdUsecase := usecase.NewBookIdUsecase(bookIDRepo)
-	bookIdController := controller.NewBookIdController(bookIdUsecase)
-
-	createRepo := createrepository.GetDbCreateBook(db)
-	createUsecase := createusecase.NewCreateBookUsecase(createRepo)
-	createController := createcontroller.NewCreateBookController(createUsecase)
+	// bookIdController := bookcontroller.GetBookIdController(bookusecase)
 
 	app := fiber.New()
 	fiberPort := os.Getenv("FiberPort")
 
 	app.Get("/api/config", configs.GetSecretkey)
-	app.Get("/book", bookController.GetBooksHandler)
-	book_id := app.Get("/book/:book_id", bookIdController.GetBookIdHandler)
-	fmt.Print(book_id)
-	app.Post("/book", createController.CreateBooksHandler)
 
-	// booksRepo := adapter.NewPostgrestBookRepo(db)
-	// createBookService := createbook.NewBookService(booksRepo)
-	// booksHandler := adapter.NewHttpCreateBookHandler(createBookService)
-
-	// app.Post("/createbook", booksHandler.CreateBook)
+	app.Get("/book", bookcontroller.GetBookAllController)
+	app.Get("/book/:book_id", bookcontroller.GetBookIdController)
 	app.Listen(":" + fiberPort)
 }
