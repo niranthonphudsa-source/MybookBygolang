@@ -14,6 +14,7 @@ type BooksRepository interface {
 	GetBooksAll() ([]entities.Books, error)
 	GetBookId(book_id int) (*entities.Books, error)
 	CreateBook(bookNew *entities.Books) error
+	DeleteBookId(book_id int) error
 }
 
 type getDbBooks struct {
@@ -72,5 +73,9 @@ func (conn *getDbBooks) CreateBook(bookNew *entities.Books) error {
 		return err
 	}
 	return err
+
+}
+
+func (conn *getDbBooks) DeleteBookId(book_id int) error {
 
 }
