@@ -30,26 +30,25 @@ func main() {
 	cgf := configs.GetConnectServer()
 	db := database.ConnecDB(cgf)
 
-	bookRepo := bookrepository.NewBooksRepository(db)
-	bookusecase := bookusecase.NewBookUsecase(bookRepo)
-	bookcontroller := bookcontroller.NewBookController(bookusecase)
-
 	registerRepo := registerrepository.NewRegisterRepo(db)
 	registerUsecase := registerusecase.NewRegisterUsecaseImplrepo(registerRepo)
 	registerController := registercontroller.NewRegisterController(registerUsecase)
+
+	bookRepo := bookrepository.NewBooksRepository(db)
+	bookusecase := bookusecase.NewBookUsecase(bookRepo)
+	bookcontroller := bookcontroller.NewBookController(bookusecase)
 
 	app := fiber.New()
 	fiberPort := os.Getenv("FiberPort")
 
 	// app.Get("/api/config", configs.GetSecretkey)
+	app.Post("/register", registerController.RegisterController)
 
 	app.Get("/book", bookcontroller.GetBookAllController)
 	app.Get("/book/:book_id", bookcontroller.GetBookIdController)
 	app.Post("/book", bookcontroller.CreateBookController)
 	app.Delete("/book/:book_id", bookcontroller.DeleteBookIdController)
 	app.Put("/book/:book_id", bookcontroller.UpdateBookIdController)
-
-	app.Post("/register", registerController.RegisterController)
 
 	app.Listen(":" + fiberPort)
 }
