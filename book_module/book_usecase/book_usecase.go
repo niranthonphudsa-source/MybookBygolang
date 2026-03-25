@@ -37,4 +37,6 @@ func (bookrepo *bookUsecase) CreateBookRepoImpl(bookNew *entities.Books) error {
 	return bookrepo.repo.CreateBook(bookNew)
 }
 
-func (bookrepo *bookUsecase) CreateBookRepoImpl(book_id int) error
+func (bookrepo *bookUsecase) DeleteBookIdImpl(book_id int) error {
+
+}
