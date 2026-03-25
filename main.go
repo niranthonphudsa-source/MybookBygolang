@@ -8,6 +8,9 @@ import (
 	bookcontroller "mylibary/book_module/book_controller"
 	bookrepository "mylibary/book_module/book_repository"
 	bookusecase "mylibary/book_module/book_usecase"
+	logincontroller "mylibary/login_module/login_controller"
+	loginrepository "mylibary/login_module/login_repository"
+	loginusecase "mylibary/login_module/login_usecase"
 	registercontroller "mylibary/register_module/register_controller"
 	registerrepository "mylibary/register_module/register_repository"
 	registerusecase "mylibary/register_module/register_usecase"
@@ -34,6 +37,10 @@ func main() {
 	registerUsecase := registerusecase.NewRegisterUsecaseImplrepo(registerRepo)
 	registerController := registercontroller.NewRegisterController(registerUsecase)
 
+	loginRepo := loginrepository.NewLoginRepo(db)
+	loginUsecase := loginusecase.NewLoginUsecase(loginRepo)
+	loginController := logincontroller.NewLoginController(loginUsecase)
+
 	bookRepo := bookrepository.NewBooksRepository(db)
 	bookusecase := bookusecase.NewBookUsecase(bookRepo)
 	bookcontroller := bookcontroller.NewBookController(bookusecase)
@@ -43,7 +50,7 @@ func main() {
 
 	// app.Get("/api/config", configs.GetSecretkey)
 	app.Post("/register", registerController.RegisterController)
-
+	app.Post("/login", loginController.LoginController)
 	app.Get("/book", bookcontroller.GetBookAllController)
 	app.Get("/book/:book_id", bookcontroller.GetBookIdController)
 	app.Post("/book", bookcontroller.CreateBookController)
