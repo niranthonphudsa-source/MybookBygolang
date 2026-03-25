@@ -8,6 +8,9 @@ import (
 	bookcontroller "mylibary/book_module/book_controller"
 	bookrepository "mylibary/book_module/book_repository"
 	bookusecase "mylibary/book_module/book_usecase"
+	registercontroller "mylibary/register_module/register_controller"
+	registerrepository "mylibary/register_module/register_repository"
+	registerusecase "mylibary/register_module/register_usecase"
 
 	"mylibary/configs"
 	"mylibary/pkg/database"
@@ -31,6 +34,10 @@ func main() {
 	bookusecase := bookusecase.NewBookUsecase(bookRepo)
 	bookcontroller := bookcontroller.NewBookController(bookusecase)
 
+	registerRepo := registerrepository.NewRegisterRepo(db)
+	registerUsecase := registerusecase.NewRegisterUsecaseImplrepo(registerRepo)
+	registerController := registercontroller.NewRegisterController(registerUsecase)
+
 	app := fiber.New()
 	fiberPort := os.Getenv("FiberPort")
 
@@ -41,5 +48,8 @@ func main() {
 	app.Post("/book", bookcontroller.CreateBookController)
 	app.Delete("/book/:book_id", bookcontroller.DeleteBookIdController)
 	app.Put("/book/:book_id", bookcontroller.UpdateBookIdController)
+
+	app.Post("/register", registerController.RegisterController)
+
 	app.Listen(":" + fiberPort)
 }
