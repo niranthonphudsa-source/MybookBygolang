@@ -36,13 +36,14 @@ func (conn *SQLconnectDB) CheckLoginRepository(Email string, Passwords string) e
 func (conn *SQLconnectDB) LoginRepo(data *entities.UserLogin) error {
 	errCheck := conn.CheckLoginRepository(data.Email, data.Passwords)
 	fmt.Println("Error is", errCheck)
-
-	_, err := conn.db.Exec("INSERT INTO public.login_db "+
-		"(email, password) VALUES ($1, $2)", data.Email, data.Passwords)
-	fmt.Println("Error is", data.Email, data.Passwords)
-	if err == nil {
-		return err
+	if errCheck == nil {
+		_, err := conn.db.Exec("INSERT INTO public.login_db "+
+			"(email, password) VALUES ($1, $2)", data.Email, data.Passwords)
+		fmt.Println("Error is", data.Email, data.Passwords)
+		if err == nil {
+			return errors.New("Login Success!!!")
+		}
+		return errors.New("Have to register, No user")
 	}
-	return nil
-
+	return errors.New("Have to register, No user")
 }
