@@ -77,5 +77,10 @@ func (conn *getDbBooks) CreateBook(bookNew *entities.Books) error {
 }
 
 func (conn *getDbBooks) DeleteBookId(book_id int) error {
-
+	fmt.Print(book_id)
+	_, err := conn.db.Exec("DELETE FROM public.mybook_db WHERE book_id = $1", book_id)
+	if err != nil {
+		return err
+	}
+	return err
 }
