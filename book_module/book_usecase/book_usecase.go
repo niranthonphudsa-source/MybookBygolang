@@ -38,5 +38,5 @@ func (bookrepo *bookUsecase) CreateBookRepoImpl(bookNew *entities.Books) error {
 }
 
 func (bookrepo *bookUsecase) DeleteBookIdImpl(book_id int) error {
-
+	return bookrepo.repo.DeleteBookId(book_id)
 }
