@@ -15,6 +15,7 @@ type BooksRepository interface {
 	GetBookId(book_id int) (*entities.Books, error)
 	CreateBook(bookNew *entities.Books) error
 	DeleteBookId(book_id int) error
+	UpdateBookId(book_id int, bookUpdate *entities.Books) (*entities.Books, error)
 }
 
 type getDbBooks struct {
@@ -83,4 +84,17 @@ func (conn *getDbBooks) DeleteBookId(book_id int) error {
 		return err
 	}
 	return err
+}
+
+func (conn *getDbBooks) UpdateBookId(book_id int, bookUpdate *entities.Books) (*entities.Books, error) {
+	fmt.Print("Repository", book_id)
+
+	_, err := conn.db.Exec("UPDATE public.mybook_db SET "+
+		"book_name = $1, book_author = $2 WHERE book_id = $3", bookUpdate.Book_name, bookUpdate.Book_author, book_id)
+
+	if err != nil {
+		return nil, err
+	}
+	return bookUpdate, nil
+
 }

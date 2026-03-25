@@ -61,6 +61,7 @@ func (u *bookController) CreateBookController(c *fiber.Ctx) error {
 func (u *bookController) DeleteBookIdController(c *fiber.Ctx) error {
 	book_id, _ := strconv.Atoi(c.Params("book_id"))
 	fmt.Print(book_id)
+
 	err := u.usecase.DeleteBookIdImpl(book_id)
 	if err != nil {
 		return c.JSON(fiber.Map{
@@ -70,4 +71,23 @@ func (u *bookController) DeleteBookIdController(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"message": "Delete Success",
 	})
+}
+
+func (u *bookController) UpdateBookIdController(c *fiber.Ctx) error {
+	var book_update = new(entities.Books)
+
+	book_id, _ := strconv.Atoi(c.Params("book_id"))
+	fmt.Print("Controller", book_id)
+
+	if err := c.BodyParser(&book_update); err != nil {
+		return err
+	}
+	_, err := u.usecase.UpdateBookIdRepoImpl(book_id, book_update)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(&book_update)
+
 }

@@ -31,8 +31,6 @@ func main() {
 	bookusecase := bookusecase.NewBookUsecase(bookRepo)
 	bookcontroller := bookcontroller.NewBookController(bookusecase)
 
-	// bookIdController := bookcontroller.GetBookIdController(bookusecase)
-
 	app := fiber.New()
 	fiberPort := os.Getenv("FiberPort")
 
@@ -42,5 +40,6 @@ func main() {
 	app.Get("/book/:book_id", bookcontroller.GetBookIdController)
 	app.Post("/book", bookcontroller.CreateBookController)
 	app.Delete("/book/:book_id", bookcontroller.DeleteBookIdController)
+	app.Put("/book/:book_id", bookcontroller.UpdateBookIdController)
 	app.Listen(":" + fiberPort)
 }
