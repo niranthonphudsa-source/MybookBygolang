@@ -9,6 +9,7 @@ type BookUsecase interface {
 	GetBookAllRepoImpl() ([]entities.Books, error)
 	GetBookIdRepoImpl(book_id int) (*entities.Books, error)
 	CreateBookRepoImpl(bookNew *entities.Books) error
+	DeleteBookIdImpl(book_id int) error
 }
 
 type bookUsecase struct {
@@ -35,3 +36,5 @@ func (bookrepo *bookUsecase) GetBookIdRepoImpl(book_id int) (*entities.Books, er
 func (bookrepo *bookUsecase) CreateBookRepoImpl(bookNew *entities.Books) error {
 	return bookrepo.repo.CreateBook(bookNew)
 }
+
+func (bookrepo *bookUsecase) CreateBookRepoImpl(book_id int) error
