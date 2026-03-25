@@ -12,8 +12,12 @@ import (
 	registerrepository "mylibary/register_module/register_repository"
 	registerusecase "mylibary/register_module/register_usecase"
 
+	"golang.org/x/crypto"
+	"github.com/golang-jwt/jwt/v4"
+
 	"mylibary/configs"
 	"mylibary/pkg/database"
+	"mylibary/middleware/checkmiddleware"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -39,6 +43,7 @@ func main() {
 	bookcontroller := bookcontroller.NewBookController(bookusecase)
 
 	app := fiber.New()
+	app.Use("/book", checkmiddleware.A)
 	fiberPort := os.Getenv("FiberPort")
 
 	// app.Get("/api/config", configs.GetSecretkey)
@@ -46,6 +51,8 @@ func main() {
 
 	app.Get("/book", bookcontroller.GetBookAllController)
 	app.Get("/book/:book_id", bookcontroller.GetBookIdController)
+
+	//
 	app.Post("/book", bookcontroller.CreateBookController)
 	app.Delete("/book/:book_id", bookcontroller.DeleteBookIdController)
 	app.Put("/book/:book_id", bookcontroller.UpdateBookIdController)
