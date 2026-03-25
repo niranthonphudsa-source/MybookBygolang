@@ -18,17 +18,17 @@ func NewLoginController(usecase loginusecase.Loginusecase) *loginController {
 
 func (u *loginController) LoginController(c *fiber.Ctx) error {
 	var loginReq = new(entities.UserLogin)
-	if err := c.BodyParser(&loginReq); err != nil {
+	if err := c.BodyParser(loginReq); err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
 			"message": "Invalid request body",
 		})
 	}
 
-	fmt.Print("loginReq",loginReq)
+	fmt.Print("loginReq", loginReq)
 	err := u.usecase.LoginUsecase(loginReq)
 	if err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
-			"message": "Login Failed",
+			"message": err.Error(),
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(loginReq)
