@@ -25,7 +25,7 @@ func main() {
 	}
 
 	cgf := configs.GetConnectServer()
-	db := database.ConnecDB(&cgf.PostgresSQL)
+	db := database.ConnecDB(cgf)
 
 	bookRepo := bookrepository.NewBooksRepository(db)
 	bookusecase := bookusecase.NewBookUsecase(bookRepo)
@@ -36,7 +36,7 @@ func main() {
 	app := fiber.New()
 	fiberPort := os.Getenv("FiberPort")
 
-	app.Get("/api/config", configs.GetSecretkey)
+	// app.Get("/api/config", configs.GetSecretkey)
 
 	app.Get("/book", bookcontroller.GetBookAllController)
 	app.Get("/book/:book_id", bookcontroller.GetBookIdController)
