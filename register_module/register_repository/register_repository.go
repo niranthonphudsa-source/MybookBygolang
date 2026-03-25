@@ -7,9 +7,11 @@ import (
 	"mylibary/register_module/entities"
 
 	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type RegisterRepository interface {
+	HashPasswords(data *entities.Users) error
 	CheckUserRepository(data *entities.Users) error
 	RegisterRepository(data *entities.Users) error
 }
@@ -31,10 +33,22 @@ func (conn *SQLconnectDB) CheckUserRepository(data *entities.Users) error {
 	return errors.New("Email already exits")
 }
 
+func (conn *SQLconnectDB) HashPasswords(data *entities.Users) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(data.Passwords), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	data.Passwords = string(hash)
+	return nil
+}
+
 func (conn *SQLconnectDB) RegisterRepository(data *entities.Users) error {
 	err := conn.CheckUserRepository(data)
 	fmt.Print("Check:", err)
 	if err == nil {
+		if err := conn.HashPasswords(data); err != nil {
+			return err
+		}
 
 		fmt.Print(data.FirstName, data.LastName, data.Age, data.Phone, data.Email, data.Passwords)
 
@@ -52,7 +66,8 @@ func (conn *SQLconnectDB) RegisterRepository(data *entities.Users) error {
 		if err != nil {
 			return err
 		}
+		return fmt.Errorf("Register Success")
 	}
-	return errors.New("Email already exits")
+	return errors.New("Email already exits1")
 
 }
