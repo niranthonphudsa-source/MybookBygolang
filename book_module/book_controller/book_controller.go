@@ -90,3 +90,18 @@ func (u *bookController) UpdateBookIdController(c *fiber.Ctx) error {
 	return c.JSON(&book_update)
 
 }
+
+func (u *bookController) BorrowBookController(c *fiber.Ctx) error {
+	var b = new(entities.Books)
+	book_id, _ := strconv.Atoi(c.Params("book_id"))
+
+	fmt.Print("Controller", book_id)
+	if err := c.BodyParser(&b); err != nil {
+		return err
+	}
+	err := u.usecase.BrrowBookRepoImpl(book_id)
+	if err != nil {
+		return c.JSON(err)
+	}
+	return c.Status(fiber.StatusOK).JSON(&book_id)
+}

@@ -57,6 +57,7 @@ func main() {
 
 	bookGroup.Get("/", bookcontroller.GetBookAllController)
 	bookGroup.Get("/:book_id", bookcontroller.GetBookIdController)
+	bookGroup.Post("/:book_id", bookcontroller.BorrowBookController)
 
 	admin := bookGroup.Group("/", middleware.AdminOnly())
 
