@@ -81,5 +81,5 @@ func (conn *SQLconnectDB) LoginRepo(data *entities.UserLogin) error {
 	if err != nil {
 		return err
 	}
-	return errors.New("Login Success" + t)
+	return errors.New("Login Success: " + t)
 }
