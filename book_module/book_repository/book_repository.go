@@ -29,7 +29,7 @@ func NewBooksRepository(db *sql.DB) *getDbBooks {
 
 func (conn *getDbBooks) GetBooksAll() ([]entities.Books, error) {
 	rows, err := conn.db.Query("SELECT book_id, book_name," +
-		"book_autho, admibupdate_id FROM public.mybook_db")
+		"book_author, adminupdate_id FROM public.mybook_db")
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func (conn *getDbBooks) GetBooksAll() ([]entities.Books, error) {
 
 	for rows.Next() {
 		var b entities.Books
-		err := rows.Scan(&b.Book_id, &b.Book_name, &b.Book_author, b.Adminupdate_id)
+		err := rows.Scan(&b.Book_id, &b.Book_name, &b.Book_author, &b.Adminupdate_id)
 		if err != nil {
 			return nil, err
 		}

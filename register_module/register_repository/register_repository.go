@@ -55,7 +55,7 @@ func (conn *SQLconnectDB) RegisterRepository(data *entities.Users) error {
 		_, err := conn.db.Exec("INSERT INTO public.register_db(first_name, last_name, age, phone, email, passwords) "+
 			" VALUES ($1, $2, $3, $4, $5, $6)", data.FirstName, data.LastName, data.Age, data.Phone, data.Email, data.Passwords)
 
-		if data.Email == "adminrmuti@gmail.com" && data.Passwords == "adminrmuti1234" {
+		if data.Email == "adminrmuti@gmail.com" {
 			_, err := conn.db.Exec("INSERT INTO public.admin_db(first_name, last_name, age, phone, email, passwords) "+
 				" VALUES ($1, $2, $3, $4, $5, $6)", data.FirstName, data.LastName, data.Age, data.Phone, data.Email, data.Passwords)
 			if err != nil {

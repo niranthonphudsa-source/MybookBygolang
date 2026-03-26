@@ -5,7 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"mylibary/login_module/entities"
+	"os"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,10 +27,18 @@ func NewLoginRepo(db *sql.DB) *SQLconnectDB {
 }
 
 func (conn *SQLconnectDB) CheckLoginRepository(data *entities.UserLogin) error {
-	var storeHash string
-
-	err := conn.db.QueryRow("SELECT passwords FROM public.register_db WHERE email = $1", data.Email).Scan(&storeHash)
-	fmt.Print("Email: ", data.Email, "Password ", storeHash)
+	var storedHash string
+	var Status string
+	query := `
+        SELECT 
+            r.passwords, 
+            CASE WHEN a.email IS NOT NULL THEN 'admin' ELSE 'user' END as role
+        FROM public.register_db r
+        LEFT JOIN public.admin_db a ON r.email = a.email
+        WHERE r.email = $1
+    `
+	err := conn.db.QueryRow(query, data.Email).Scan(&storedHash, &Status)
+	fmt.Print("Email: ", data.Email, "Password ", storedHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return errors.New("user not found")
@@ -35,10 +46,11 @@ func (conn *SQLconnectDB) CheckLoginRepository(data *entities.UserLogin) error {
 		return err
 	}
 
-	errCheckHash := bcrypt.CompareHashAndPassword([]byte(storeHash), []byte(data.Passwords))
+	errCheckHash := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(data.Passwords))
 	if errCheckHash != nil {
 		return errors.New("Invalid Password")
 	}
+	data.Status = Status
 	return nil
 }
 
@@ -58,5 +70,16 @@ func (conn *SQLconnectDB) LoginRepo(data *entities.UserLogin) error {
 		return errors.New("Login Failed")
 	}
 
-	return errors.New("Login Success")
+	claims := jwt.MapClaims{
+		"email":  data.Email,
+		"status": data.Status,
+		"exp":    time.Now().Add(time.Hour * 72).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	t, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
+	if err != nil {
+		return err
+	}
+	return errors.New("Login Success" + t)
 }

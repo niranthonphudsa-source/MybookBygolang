@@ -8,7 +8,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-
 func Protected() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.Get("Authorization")
@@ -24,7 +23,7 @@ func Protected() fiber.Handler {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fiber.ErrUnauthorized
 			}
-			return []byte(os.Getenv("JWT_SECRET")), nil
+			return []byte(os.Getenv("SECRET_KEY")), nil
 		})
 
 		if err != nil || !token.Valid {
@@ -34,7 +33,7 @@ func Protected() fiber.Handler {
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			c.Locals("role", claims["role"])
+			c.Locals("status", claims["status"])
 			c.Locals("user_id", claims["user_id"])
 		}
 
@@ -44,7 +43,7 @@ func Protected() fiber.Handler {
 
 func AdminOnly() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		role := c.Locals("role")
+		role := c.Locals("status")
 
 		roleStr, ok := role.(string)
 		if !ok || roleStr != "admin" {
