@@ -11,6 +11,7 @@ import (
 	logincontroller "mylibary/login_module/login_controller"
 	loginrepository "mylibary/login_module/login_repository"
 	loginusecase "mylibary/login_module/login_usecase"
+	"mylibary/middleware"
 	registercontroller "mylibary/register_module/register_controller"
 	registerrepository "mylibary/register_module/register_repository"
 	registerusecase "mylibary/register_module/register_usecase"
@@ -51,11 +52,17 @@ func main() {
 	// app.Get("/api/config", configs.GetSecretkey)
 	app.Post("/register", registerController.RegisterController)
 	app.Post("/login", loginController.LoginController)
-	app.Get("/book", bookcontroller.GetBookAllController)
-	app.Get("/book/:book_id", bookcontroller.GetBookIdController)
-	app.Post("/book", bookcontroller.CreateBookController)
-	app.Delete("/book/:book_id", bookcontroller.DeleteBookIdController)
-	app.Put("/book/:book_id", bookcontroller.UpdateBookIdController)
+
+	bookGroup := app.Group("/book", middleware.Protected())
+
+	bookGroup.Get("/", bookcontroller.GetBookAllController)
+	bookGroup.Get("/:book_id", bookcontroller.GetBookIdController)
+
+	admin := bookGroup.Group("/book", middleware.AdminOnly())
+
+	admin.Post("/", bookcontroller.CreateBookController)
+	admin.Delete("/book/:book_id", bookcontroller.DeleteBookIdController)
+	admin.Put("/book/:book_id", bookcontroller.UpdateBookIdController)
 
 	app.Listen(":" + fiberPort)
 }

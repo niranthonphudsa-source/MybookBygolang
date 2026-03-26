@@ -39,7 +39,6 @@ func (conn *SQLconnectDB) CheckLoginRepository(data *entities.UserLogin) error {
 	if errCheckHash != nil {
 		return errors.New("Invalid Password")
 	}
-
 	return nil
 }
 
