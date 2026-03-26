@@ -34,7 +34,7 @@ func Protected() fiber.Handler {
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			c.Locals("status", claims["status"])
-			c.Locals("user_id", claims["user_id"])
+			c.Locals("email", claims["email"])
 		}
 
 		return c.Next()
