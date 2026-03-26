@@ -32,7 +32,7 @@ func (conn *SQLconnectDB) CheckLoginRepository(data *entities.UserLogin) error {
 	query := `
         SELECT 
             r.passwords, 
-            CASE WHEN a.email IS NOT NULL THEN 'admin' ELSE 'user' END as role
+            CASE WHEN a.email IS NOT NULL THEN 'admin' ELSE 'user' END as status
         FROM public.register_db r
         LEFT JOIN public.admin_db a ON r.email = a.email
         WHERE r.email = $1

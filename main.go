@@ -58,11 +58,11 @@ func main() {
 	bookGroup.Get("/", bookcontroller.GetBookAllController)
 	bookGroup.Get("/:book_id", bookcontroller.GetBookIdController)
 
-	admin := bookGroup.Group("/book", middleware.AdminOnly())
+	admin := bookGroup.Group("/", middleware.AdminOnly())
 
 	admin.Post("/", bookcontroller.CreateBookController)
-	admin.Delete("/book/:book_id", bookcontroller.DeleteBookIdController)
-	admin.Put("/book/:book_id", bookcontroller.UpdateBookIdController)
+	admin.Delete("/:book_id", bookcontroller.DeleteBookIdController)
+	admin.Put("/:book_id", bookcontroller.UpdateBookIdController)
 
 	app.Listen(":" + fiberPort)
 }
