@@ -2,6 +2,7 @@ package bookrepository
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"mylibary/book_module/entities"
 
@@ -14,6 +15,8 @@ type BooksRepository interface {
 	CreateBook(bookNew *entities.Books) error
 	DeleteBookId(book_id int) error
 	UpdateBookId(book_id int, bookUpdate *entities.Books) (*entities.Books, error)
+
+	BorrowBook(book_id int) error
 }
 
 type getDbBooks struct {
@@ -96,4 +99,18 @@ func (conn *getDbBooks) UpdateBookId(book_id int, bookUpdate *entities.Books) (*
 	}
 	return bookUpdate, nil
 
+}
+
+func (conn *getDbBooks) BorrowBook(book_id int) error {
+	var b entities.Books
+	query := conn.db.QueryRow("SELECT book_id FROM public.mybook_db WHERE book_id = $1", book_id).Scan(&b.Book_id)
+	if query == sql.ErrNoRows {
+		return query
+	}
+
+	_, err := conn.db.Exec("INSERT INTO public.brrowbook_db book_id VALUES $1", book_id)
+	if err != nil {
+		return errors.New("Error is" + err.Error())
+	}
+	return errors.New("Brrow Book Success")
 }
