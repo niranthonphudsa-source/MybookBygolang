@@ -61,7 +61,6 @@ func (u *bookController) CreateBookController(c *fiber.Ctx) error {
 func (u *bookController) DeleteBookIdController(c *fiber.Ctx) error {
 	book_id, _ := strconv.Atoi(c.Params("book_id"))
 	fmt.Print(book_id)
-
 	err := u.usecase.DeleteBookIdImpl(book_id)
 	if err != nil {
 		return c.JSON(fiber.Map{

@@ -8,8 +8,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var books []entities.Books
-
 type BooksRepository interface {
 	GetBooksAll() ([]entities.Books, error)
 	GetBookId(book_id int) (*entities.Books, error)
@@ -28,7 +26,8 @@ func NewBooksRepository(db *sql.DB) *getDbBooks {
 }
 
 func (conn *getDbBooks) GetBooksAll() ([]entities.Books, error) {
-	rows, err := conn.db.Query("SELECT book_id, book_name," +
+	var books []entities.Books
+	rows, err := conn.db.Query("SELECT DISTINCT book_id, book_name," +
 		"book_author, adminupdate_id FROM public.mybook_db")
 	if err != nil {
 		return nil, err
@@ -53,7 +52,7 @@ func (conn *getDbBooks) GetBooksAll() ([]entities.Books, error) {
 
 func (conn *getDbBooks) GetBookId(book_id int) (*entities.Books, error) {
 	var b entities.Books
-	err := conn.db.QueryRow("SELECT book_id, book_name, book_author, adminupdate_id "+
+	err := conn.db.QueryRow("SELECT DISTINCT book_id, book_name, book_author, adminupdate_id "+
 		" FROM public.mybook_db WHERE book_id = $1;", book_id).Scan(&b.Book_id, &b.Book_name, &b.Book_author, &b.Adminupdate_id)
 	if err != nil {
 		return nil, err
