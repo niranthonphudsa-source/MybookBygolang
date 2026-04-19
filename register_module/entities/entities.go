@@ -9,3 +9,18 @@ type Users struct {
 	Passwords string `json:"passwords"`
 	Status    string `json:"status"`
 }
+
+
+type UsersRes struct {
+	FirstName string 
+	LastName  string 
+	Message	  string 
+}
+
+func (user *Users) ToRespose() UsersRes {
+	return UsersRes{
+		FirstName: user.FirstName,
+		LastName: user.LastName,
+		Message: "REGISTER SUCCESS",
+	}
+}
